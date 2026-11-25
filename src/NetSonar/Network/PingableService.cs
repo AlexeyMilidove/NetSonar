@@ -1329,7 +1329,14 @@ public partial class PingableService : BasePingableCollectionObject<PingableServ
                 }
                 else if (ProtocolType == ServiceProtocolType.IMAP)
                 {
-                    var remotePort = (socket.RemoteEndPoint as IPEndPoint)?.Port ?? IpEndPoint.Port;
+                    // The endpoint may be an IPEndPoint or a DnsEndPoint (when a hostname was
+                    // used). Fall back to the service's own port for DNS-based targets.
+                    var remotePort = socket.RemoteEndPoint switch
+                    {
+                        IPEndPoint ep => ep.Port,
+                        DnsEndPoint de => de.Port,
+                        _ => IpEndPoint.Port
+                    };
                     bufferLength = await ReceiveAndValidateImapAsync(
                         socket,
                         GetDnsLookupTarget(),
