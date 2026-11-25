@@ -1194,6 +1194,8 @@ public partial class PingableService : BasePingableCollectionObject<PingableServ
                  or ServiceProtocolType.TLS
                  or ServiceProtocolType.DNS
                  or ServiceProtocolType.NTP
+                 or ServiceProtocolType.HTTP
+                 or ServiceProtocolType.WebSocket
                  or ServiceProtocolType.SSH
                  or ServiceProtocolType.SMTP
                  or ServiceProtocolType.IMAP
