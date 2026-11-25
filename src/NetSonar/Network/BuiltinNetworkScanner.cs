@@ -50,9 +50,15 @@ public static class BuiltinNetworkScanner
             if (
                 !int.TryParse(value[(separator + 1)..], out var prefix)
                 || !IPAddress.TryParse(value[..separator], out var network)
-                || network.AddressFamily != AddressFamily.InterNetwork
-                || prefix is < 0 or > 32
             )
+                return false;
+
+            var family = network.AddressFamily;
+            if (family == AddressFamily.InterNetwork && prefix is < 0 or > 32)
+                return false;
+            if (family == AddressFamily.InterNetworkV6 && prefix is < 0 or > 128)
+                return false;
+            if (family is not AddressFamily.InterNetwork and not AddressFamily.InterNetworkV6)
                 return false;
 
             requiredHosts = prefix >= 31 ? 1L << (32 - prefix) : (1L << (32 - prefix)) - 2;
